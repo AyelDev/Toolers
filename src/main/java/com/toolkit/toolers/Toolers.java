@@ -26,7 +26,7 @@ public class Toolers extends javax.swing.JFrame {
         String strFileName;
 
         try {
-
+            
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
             FileOutputStream fos = new FileOutputStream(filePath);
@@ -142,8 +142,9 @@ public class Toolers extends javax.swing.JFrame {
         String filePath = this.SetupDirectoryPath.getText();
 
         File targetDir = new File(filePath);
+        File parentDir = targetDir.getParentFile();
 
-        if (targetDir.exists()) {
+        if (targetDir.exists() && parentDir != null) {
             System.err.println("Directory Exists!");
             JOptionPane.showMessageDialog(jPanel2, "Directory Exists!", "Error", JOptionPane.ERROR_MESSAGE);
             new Toolers().setVisible(false);
@@ -154,7 +155,10 @@ public class Toolers extends javax.swing.JFrame {
         boolean directoryCreated = targetDir.mkdir();
 
         if (directoryCreated) {
-            System.out.println("directory created");
+            JOptionPane.showMessageDialog(jPanel2, "Directory Created!", "Success", JOptionPane.OK_OPTION);
+            new Toolers().setVisible(false);
+            new BaseFrame().setVisible(true);
+            this.dispose();
         }
         try {
             targetDir.createNewFile();
