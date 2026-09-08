@@ -5,12 +5,16 @@
 package com.toolkit.toolers;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.toolkit.toolers.Services.ConfigService;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Properties;
+
 import javax.swing.JOptionPane;
 
 /**
@@ -26,9 +30,8 @@ public class Toolers extends javax.swing.JFrame {
         String strFileName;
 
         try {
-            
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             FileOutputStream fos = new FileOutputStream(filePath);
 
         } catch (Exception e) {
@@ -43,7 +46,7 @@ public class Toolers extends javax.swing.JFrame {
      * Creates new form Index
      */
     public Toolers() {
-        initComponents();
+            initComponents();
     }
 
     /**
@@ -53,8 +56,8 @@ public class Toolers extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
 
-
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
@@ -79,65 +82,72 @@ public class Toolers extends javax.swing.JFrame {
         ProceedBtn.addActionListener(this::ProceedBtnActionPerformed);
 
         SetupDirectoryPath.setText("C:\\Users\\Ariel\\Toolers\\");
-            SetupDirectoryPath.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-            SetupDirectoryPath.setName("FilePath"); // NOI18N
-            SetupDirectoryPath.addActionListener(this::SetupDirectoryPathActionPerformed);
+        SetupDirectoryPath.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        SetupDirectoryPath.setName("FilePath"); // NOI18N
+        SetupDirectoryPath.addActionListener(this::SetupDirectoryPathActionPerformed);
 
-            MainLogo.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-            MainLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            MainLogo.setIcon(new javax.swing.ImageIcon("D:\\Users\\Ariel\\Documents\\NetBeansProjects\\Toolers\\src\\main\\java\\com\\toolkit\\toolers\\images\\folder.png")); // NOI18N
-            MainLogo.setText("TOOLERS V1.0");
-            MainLogo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            MainLogo.setFocusCycleRoot(true);
-            MainLogo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        MainLogo.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        MainLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        MainLogo.setIcon(new javax.swing.ImageIcon(
+                "D:\\Users\\Ariel\\Documents\\NetBeansProjects\\Toolers\\src\\main\\java\\com\\toolkit\\toolers\\images\\folder.png")); // NOI18N
+        MainLogo.setText("TOOLERS V1.0");
+        MainLogo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        MainLogo.setFocusCycleRoot(true);
+        MainLogo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
-            javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-            jPanel2.setLayout(jPanel2Layout);
-            jPanel2Layout.setHorizontalGroup(
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(MainLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(MainLogo, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGap(67, 67, 67)
-                            .addComponent(SetupDirectoryPath, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGap(164, 164, 164)
-                            .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap(67, Short.MAX_VALUE))
-                .addComponent(SetupDirectory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            );
-            jPanel2Layout.setVerticalGroup(
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(67, 67, 67)
+                                                .addComponent(SetupDirectoryPath,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 296,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(164, 164, 164)
+                                                .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(67, Short.MAX_VALUE))
+                        .addComponent(SetupDirectory, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+        jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                    .addGap(59, 59, 59)
-                    .addComponent(MainLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(SetupDirectory)
-                    .addGap(18, 18, 18)
-                    .addComponent(SetupDirectoryPath, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                    .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(127, Short.MAX_VALUE))
-            );
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(59, 59, 59)
+                                .addComponent(MainLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 85,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(SetupDirectory)
+                                .addGap(18, 18, 18)
+                                .addComponent(SetupDirectoryPath, javax.swing.GroupLayout.PREFERRED_SIZE, 22,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(127, Short.MAX_VALUE)));
 
-            SetupDirectoryPath.getAccessibleContext().setAccessibleName("");
+        SetupDirectoryPath.getAccessibleContext().setAccessibleName("");
 
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-            getContentPane().setLayout(layout);
-            layout.setHorizontalGroup(
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            );
-            layout.setVerticalGroup(
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+        layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            );
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
-            pack();
-        }// </editor-fold>//GEN-END:initComponents
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
-    private void ProceedBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProceedBtnActionPerformed
+    private void ProceedBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_ProceedBtnActionPerformed
         // TODO add your handling code here:
         String filePath = this.SetupDirectoryPath.getText();
 
@@ -147,39 +157,56 @@ public class Toolers extends javax.swing.JFrame {
         if (targetDir.exists() && parentDir != null) {
             System.err.println("Directory Exists!");
             JOptionPane.showMessageDialog(jPanel2, "Directory Exists!", "Error", JOptionPane.ERROR_MESSAGE);
-            new Toolers().setVisible(false);
+            ConfigService.loadConfig(filePath);
             new BaseFrame().setVisible(true);
             this.dispose();
+            return;
         }
 
-        boolean directoryCreated = targetDir.mkdir();
+        boolean directoryCreated = targetDir.mkdirs();
 
         if (directoryCreated) {
-            JOptionPane.showMessageDialog(jPanel2, "Directory Created!", "Success", JOptionPane.OK_OPTION);
-            new Toolers().setVisible(false);
-            new BaseFrame().setVisible(true);
-            this.dispose();
-        }
-        try {
-            targetDir.createNewFile();
-        } catch (IOException ex) {
-            System.getLogger(Toolers.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
-    }//GEN-LAST:event_ProceedBtnActionPerformed
+            try {
+                Properties props = ConfigService.loadConfig(targetDir.toString());
+                props.setProperty("app.dir", targetDir.toString());
+                props.setProperty("app.repoDir", targetDir.toString() + "Repo");
+                ConfigService.saveConfig();
 
-    private void SetupDirectoryPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetupDirectoryPathActionPerformed
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                JOptionPane.showMessageDialog(jPanel2, "Directory Created!", "Success", JOptionPane.OK_OPTION);
+                new BaseFrame().setVisible(true);
+                this.dispose();
+            }
+            return;
+        }
+
+        // try {
+        // targetDir.createNewFile();
+        // } catch (IOException ex) {
+        // System.getLogger(Toolers.class.getName()).log(System.Logger.Level.ERROR,
+        // (String) null, ex);
+        // }
+    }// GEN-LAST:event_ProceedBtnActionPerformed
+
+    private void SetupDirectoryPathActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_SetupDirectoryPathActionPerformed
         // TODO add your handling code here:
 
-    }//GEN-LAST:event_SetupDirectoryPathActionPerformed
+    }// GEN-LAST:event_SetupDirectoryPathActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+        // <editor-fold defaultstate="collapsed" desc=" Look and feel setting code
+        // (optional) ">
+        /*
+         * If Nimbus (introduced in Java SE 6) is not available, stay with the default
+         * look and feel.
+         * For details see
+         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -191,7 +218,7 @@ public class Toolers extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
+        // </editor-fold>
 
         FlatLightLaf.setup();
         // for config themes
@@ -199,8 +226,14 @@ public class Toolers extends javax.swing.JFrame {
         // or: FlatIntelliJLaf.setup();
         // or: FlatDarculaLaf.setup();
         /* Create and display the form */
-        
-        java.awt.EventQueue.invokeLater(() -> new Toolers().setVisible(true));
+
+        java.awt.EventQueue.invokeLater(() -> {
+            if (ConfigService.loadConfig().getProperty("app.dir", "").isEmpty()) {
+                new Toolers().setVisible(true);
+            } else {
+                new BaseFrame().setVisible(true);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

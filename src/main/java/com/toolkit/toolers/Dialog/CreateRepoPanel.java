@@ -245,7 +245,8 @@ public class CreateRepoPanel extends javax.swing.JPanel {
                     if (ex.getMessage().contains("git failed")) {
                         JOptionPane.showMessageDialog(jLabel1, "Error Cloning Git", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(jLabel1, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(jLabel1, "Error" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
                     }
                 }
             }

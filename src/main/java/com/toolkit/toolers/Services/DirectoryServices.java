@@ -17,15 +17,25 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import org.eclipse.jgit.util.FileUtils;
-
 public class DirectoryServices {
 
     public void GetDirectoryData(JTable Table) {
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
         model.setRowCount(0);
 
-        Path root = Paths.get("D:\\Users\\Ariel\\Toolers\\Repo");
+        String appDir = ConfigService.loadConfig().getProperty("app.dir");
+        Path root = Paths.get(appDir, "Repo");
+        
+        try {
+        Files.createDirectories(root);
+        ConfigService.saveConfig();
+
+        } catch (IOException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try (var stream = Files.list(root)) {
             stream.filter(Files::isDirectory)
