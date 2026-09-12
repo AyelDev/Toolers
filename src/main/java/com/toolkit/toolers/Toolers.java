@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
+import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
  *
@@ -47,6 +48,8 @@ public class Toolers extends javax.swing.JFrame {
      */
     public Toolers() {
             initComponents();
+            UserTxt.setText("");
+            PromptSupport.setPrompt("User name here", UserTxt);
     }
 
     /**
@@ -57,7 +60,7 @@ public class Toolers extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
 
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
@@ -65,6 +68,7 @@ public class Toolers extends javax.swing.JFrame {
         ProceedBtn = new javax.swing.JButton();
         SetupDirectoryPath = new javax.swing.JTextField();
         MainLogo = new javax.swing.JLabel();
+        UserTxt = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(java.awt.Color.white);
@@ -82,81 +86,84 @@ public class Toolers extends javax.swing.JFrame {
         ProceedBtn.addActionListener(this::ProceedBtnActionPerformed);
 
         SetupDirectoryPath.setText("C:\\Users\\Ariel\\Toolers\\");
-        SetupDirectoryPath.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        SetupDirectoryPath.setName("FilePath"); // NOI18N
-        SetupDirectoryPath.addActionListener(this::SetupDirectoryPathActionPerformed);
+            SetupDirectoryPath.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+            SetupDirectoryPath.setName("FilePath"); // NOI18N
+            SetupDirectoryPath.addActionListener(this::SetupDirectoryPathActionPerformed);
 
-        MainLogo.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        MainLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        MainLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/folder.png"))); // NOI18N
-        MainLogo.setText("TOOLERS V1.0");
-        MainLogo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        MainLogo.setFocusCycleRoot(true);
-        MainLogo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+            MainLogo.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+            MainLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            MainLogo.setText("TOOLERS V1.0");
+            MainLogo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            MainLogo.setFocusCycleRoot(true);
+            MainLogo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
+            javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+            jPanel2.setLayout(jPanel2Layout);
+            jPanel2Layout.setHorizontalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(MainLogo, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(67, 67, 67)
-                                                .addComponent(SetupDirectoryPath,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 296,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(164, 164, 164)
-                                                .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(67, Short.MAX_VALUE))
-                        .addComponent(SetupDirectory, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-        jPanel2Layout.setVerticalGroup(
+                .addComponent(MainLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(SetupDirectory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(67, 67, 67)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(UserTxt)
+                        .addComponent(SetupDirectoryPath, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .addContainerGap(169, Short.MAX_VALUE)
+                    .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(166, 166, 166))
+            );
+            jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addGap(59, 59, 59)
-                                .addComponent(MainLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 85,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(SetupDirectory)
-                                .addGap(18, 18, 18)
-                                .addComponent(SetupDirectoryPath, javax.swing.GroupLayout.PREFERRED_SIZE, 22,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(127, Short.MAX_VALUE)));
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .addGap(59, 59, 59)
+                    .addComponent(MainLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addComponent(SetupDirectory)
+                    .addGap(18, 18, 18)
+                    .addComponent(SetupDirectoryPath, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(UserTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addComponent(ProceedBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(59, Short.MAX_VALUE))
+            );
 
-        SetupDirectoryPath.getAccessibleContext().setAccessibleName("");
+            SetupDirectoryPath.getAccessibleContext().setAccessibleName("");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-        layout.setVerticalGroup(
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            );
+            layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
     private void ProceedBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_ProceedBtnActionPerformed
         // TODO add your handling code here:
         String filePath = this.SetupDirectoryPath.getText();
+        String user = this.UserTxt.getText().trim();
+
+        if(filePath.isEmpty() || user.isEmpty()){
+            JOptionPane.showMessageDialog(jPanel2, "Please fill in both directory and username!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         File targetDir = new File(filePath);
         File parentDir = targetDir.getParentFile();
 
         if (targetDir.exists() && parentDir != null) {
             System.err.println("Directory Exists!");
+            Properties props = ConfigService.loadConfig(filePath);
+            props.setProperty("app.user", user);
             JOptionPane.showMessageDialog(jPanel2, "Directory Exists!", "Error", JOptionPane.ERROR_MESSAGE);
-            ConfigService.loadConfig(filePath);
             new BaseFrame().setVisible(true);
             this.dispose();
             return;
@@ -168,6 +175,7 @@ public class Toolers extends javax.swing.JFrame {
             try {
                 Properties props = ConfigService.loadConfig(targetDir.toString());
                 props.setProperty("app.dir", targetDir.toString());
+                props.setProperty("app.user", user);
                 props.setProperty("app.repoDir", targetDir.toPath().resolve("Repo").toString());
                 ConfigService.saveConfig();
 
@@ -240,6 +248,7 @@ public class Toolers extends javax.swing.JFrame {
     private javax.swing.JButton ProceedBtn;
     private javax.swing.JLabel SetupDirectory;
     private javax.swing.JTextField SetupDirectoryPath;
+    private javax.swing.JTextField UserTxt;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
 }

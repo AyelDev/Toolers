@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class ConfigService {
@@ -101,4 +104,31 @@ public class ConfigService {
         saveConfig();
     }
 
+    public static List<String> getTasks(){
+        loadConfig();
+        String tasks = properties.getProperty("app.tasks", "");
+        if(tasks.isEmpty()) return new ArrayList<>();
+        return new ArrayList<>(Arrays.asList(tasks.split(",")));
+    }
+
+    public static void addTask(String task){
+        loadConfig();
+        String existing = properties.getProperty("app.tasks", "");
+        if(existing.isEmpty()){
+            properties.setProperty("app.tasks", task);
+        }else{
+            properties.setProperty("app.tasks", existing + "," + task);
+        }
+        saveConfig();
+    }
+
+    public static void removeTask(String task){
+        loadConfig();
+        String existing = properties.getProperty("app.tasks", "");
+        if(existing.isEmpty()) return;
+        List<String> tasks = new ArrayList<>(Arrays.asList(existing.split(",")));
+        tasks.remove(task);
+        properties.setProperty("app.tasks", String.join(",", tasks));
+        saveConfig();
+    }
 }

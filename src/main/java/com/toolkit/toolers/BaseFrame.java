@@ -6,10 +6,12 @@ package com.toolkit.toolers;
 
 import com.toolkit.toolers.Dialog.CreateRepoPanel;
 import com.toolkit.toolers.Dialog.CreateTaskPanel;
+import com.toolkit.toolers.Services.ConfigService;
 import com.toolkit.toolers.Services.DirectoryServices;
 import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.UIManager;
@@ -19,6 +21,8 @@ import org.jdesktop.swingx.prompt.PromptSupport;
 import java.awt.event.ActionEvent; // correct
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
@@ -34,6 +38,7 @@ public class BaseFrame extends java.awt.Frame {
      */
     public BaseFrame() {
         initComponents();
+        
         new DirectoryServices().GetDirectoryData(jTable1);
         PromptSupport.setPrompt("Search...", jTextField1);
 
@@ -318,6 +323,10 @@ public class BaseFrame extends java.awt.Frame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         jTabbedPane1.setSelectedIndex(1);
+         String taskDir = ConfigService.loadConfig().getProperty("app.taskDir", "");
+        if(!taskDir.isEmpty()){
+            jFileChooser2.setCurrentDirectory(new File(taskDir));
+        }
         setButton(jButton1);
         resetButtons(jButton4, Repository, jButton2);
     }// GEN-LAST:event_jButton1ActionPerformed
