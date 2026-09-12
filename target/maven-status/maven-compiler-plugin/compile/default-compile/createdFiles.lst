@@ -1,3 +1,4 @@
+com\toolkit\toolers\Dialog\CreateTaskPanel.class
 com\toolkit\toolers\Toolers.class
 com\toolkit\toolers\cell\ActionButton$1.class
 com\toolkit\toolers\BaseFrame.class
@@ -13,8 +14,10 @@ com\toolkit\toolers\cell\PanelAction$3.class
 com\toolkit\toolers\Services\ConfigService.class
 com\toolkit\toolers\cell\PanelAction.class
 com\toolkit\toolers\BaseFrame$2.class
+com\toolkit\toolers\BaseFrame$7.class
 com\toolkit\toolers\Services\GitServices.class
 com\toolkit\toolers\BaseFrame$1.class
+com\toolkit\toolers\BaseFrame$8.class
 com\toolkit\toolers\Dialog\CreateRepoPanel$1.class
 com\toolkit\toolers\Dialog\CreateRepoPanel$1$1.class
 com\toolkit\toolers\cell\ActionButton.class
