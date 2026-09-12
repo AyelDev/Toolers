@@ -90,4 +90,15 @@ public class ConfigService {
         }
     }
 
+    public static String getProperty(String key) {
+        loadConfig();
+        return properties.getProperty(key);
+    }
+
+    public static void setProperty(String key, String value) {
+        loadConfig();
+        properties.setProperty(key, value);
+        saveConfig();
+    }
+
 }

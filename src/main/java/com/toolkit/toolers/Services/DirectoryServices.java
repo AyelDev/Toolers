@@ -21,6 +21,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.api.errors.TransportException;
+import java.net.URI;
 
 public class DirectoryServices {
 
@@ -143,19 +146,76 @@ public class DirectoryServices {
                 DefaultTableModel model = (DefaultTableModel) Table.getModel();
 
                 Object fullPath = model.getValueAt(modelRow, 2);
-
                 File repoDir = new File(fullPath.toString());
+                String tokenKey = "token." + fullPath;
 
                 try (Git git = Git.open(repoDir)) {
-                    git.fetch().call();
+                    // 1. Try extract token from remote URL
+                    String remoteUrl = git.getRepository().getConfig()
+                            .getString("remote", "origin", "url");
+                    String token = extractTokenFromUrl(remoteUrl);
+
+                    // 2. If not in URL, check config
+                    if (token == null || token.isEmpty()) {
+                        token = ConfigService.getProperty(tokenKey);
+                    }
+
+                    // 3. Try fetch with available token
+                    if (token != null && !token.isEmpty()) {
+                        try {
+                            git.fetch()
+                                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
+                                    .call();
+                            JOptionPane.showMessageDialog(Table, "Fetch completed successfully for: " + fullPath.toString());
+                            return;
+                        } catch (TransportException e) {
+                            // Token failed, fall through to prompt
+                        }
+                    }
+
+                    // 4. Prompt user for token
+                    String inputToken = JOptionPane.showInputDialog(Table,
+                            "Authentication required. Please enter your token:",
+                            "Fetch - Authentication", JOptionPane.PLAIN_MESSAGE);
+
+                    if (inputToken == null || inputToken.trim().isEmpty()) {
+                        if (Table.isEditing()) {
+                            Table.getCellEditor().cancelCellEditing();
+                        }
+                        return;
+                    }
+
+                    // 5. Save token to config and retry
+                    ConfigService.setProperty(tokenKey, inputToken.trim());
+
+                    git.fetch()
+                            .setCredentialsProvider(new UsernamePasswordCredentialsProvider(inputToken.trim(), ""))
+                            .call();
                     JOptionPane.showMessageDialog(Table, "Fetch completed successfully for: " + fullPath.toString());
+
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(Table, "Error opening Git repository: " + e.getMessage());
+                } catch (TransportException e) {
+                    Table.getCellEditor().cancelCellEditing();
+                    JOptionPane.showMessageDialog(Table, "Authentication failed: " + e.getMessage());
                 } catch (Exception e) {
                     Table.getCellEditor().cancelCellEditing();
                     JOptionPane.showMessageDialog(Table, "Error fetching data: " + e.getMessage());
-                } 
-             
+                }
+            }
+
+            private String extractTokenFromUrl(String url) {
+                if (url == null) return null;
+                try {
+                    URI uri = new URI(url);
+                    String userInfo = uri.getUserInfo();
+                    if (userInfo != null && !userInfo.isEmpty()) {
+                        return userInfo;
+                    }
+                } catch (Exception e) {
+                    // URL parsing failed (e.g. SSH URLs)
+                }
+                return null;
             }
             
             @Override
