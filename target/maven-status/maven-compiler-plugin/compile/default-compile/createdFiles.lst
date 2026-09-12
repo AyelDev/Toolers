@@ -9,6 +9,7 @@ com\toolkit\toolers\cell\TableActionEvent.class
 com\toolkit\toolers\cell\PanelAction$2.class
 com\toolkit\toolers\BaseFrame$5.class
 com\toolkit\toolers\BaseFrame$4.class
+com\toolkit\toolers\cell\PanelAction$3.class
 com\toolkit\toolers\Services\ConfigService.class
 com\toolkit\toolers\cell\PanelAction.class
 com\toolkit\toolers\BaseFrame$2.class
@@ -20,6 +21,7 @@ com\toolkit\toolers\cell\ActionButton.class
 com\toolkit\toolers\cell\PanelAction$1.class
 com\toolkit\toolers\BaseFrame$3.class
 com\toolkit\toolers\BaseFrame$6.class
+com\toolkit\toolers\cell\PanelAction$4.class
 com\toolkit\toolers\Services\DirectoryServices$1$1.class
 com\toolkit\toolers\cell\TableActionCellRender.class
 com\toolkit\toolers\Services\DirectoryServices$1.class

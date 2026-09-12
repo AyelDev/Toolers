@@ -18,7 +18,11 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="cmdView" min="-2" pref="54" max="-2" attributes="0"/>
+              <Component id="cmdTerminal" min="-2" pref="54" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="cmdFetch" min="-2" pref="59" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="cmdFolder" min="-2" pref="59" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="cmdDelete" min="-2" pref="59" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -27,26 +31,53 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="cmdView" min="-2" pref="52" max="-2" attributes="0"/>
           <Component id="cmdDelete" pref="0" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <Component id="cmdTerminal" min="-2" pref="52" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+          </Group>
+          <Component id="cmdFetch" max="32767" attributes="0"/>
+          <Component id="cmdFolder" alignment="1" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="com.toolkit.toolers.cell.ActionButton" name="cmdView">
+    <Component class="com.toolkit.toolers.cell.ActionButton" name="cmdTerminal">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="D:\Users\Ariel\Documents\NetBeansProjects\Toolers\src\main\java\com\toolkit\toolers\images\eye.png"/>
+          <Image iconType="3" name="/com/toolkit/toolers/images/terminal.png"/>
         </Property>
         <Property name="defaultCapable" type="boolean" value="false"/>
         <Property name="focusCycleRoot" type="boolean" value="true"/>
         <Property name="horizontalTextPosition" type="int" value="0"/>
       </Properties>
     </Component>
+    <Component class="com.toolkit.toolers.cell.ActionButton" name="cmdFetch">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/com/toolkit/toolers/images/fetch.png"/>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdFetchActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="com.toolkit.toolers.cell.ActionButton" name="cmdFolder">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/com/toolkit/toolers/images/folder.png"/>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdFolderActionPerformed"/>
+      </Events>
+    </Component>
     <Component class="com.toolkit.toolers.cell.ActionButton" name="cmdDelete">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="D:\Users\Ariel\Documents\NetBeansProjects\Toolers\src\main\java\com\toolkit\toolers\images\bin.png"/>
+          <Image iconType="3" name="/com/toolkit/toolers/images/bin.png"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>

@@ -161,6 +161,10 @@ public class BaseFrame extends java.awt.Frame {
             }
         });
         jScrollPane2.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(3).setMinWidth(280);
+            jTable1.getColumnModel().getColumn(3).setMaxWidth(280);
+        }
 
         javax.swing.GroupLayout RepositoryPanelLayout = new javax.swing.GroupLayout(RepositoryPanel);
         RepositoryPanel.setLayout(RepositoryPanelLayout);

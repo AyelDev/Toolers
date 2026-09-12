@@ -10,5 +10,7 @@ package com.toolkit.toolers.cell;
  */
 public interface TableActionEvent {
     public void onDelete(int row);
-    public void onView(int row);
+    public void onTerminal(int row);
+    public void onFetch(int row);
+    public void onOpen(int row);
 }

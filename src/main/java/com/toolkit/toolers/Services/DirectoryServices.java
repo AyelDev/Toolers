@@ -4,6 +4,8 @@ import com.toolkit.toolers.BaseFrame;
 import com.toolkit.toolers.cell.TableActionCellEditor;
 import com.toolkit.toolers.cell.TableActionCellRender;
 import com.toolkit.toolers.cell.TableActionEvent;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -17,6 +19,9 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import org.eclipse.jgit.api.Git;
+
 public class DirectoryServices {
 
     public void GetDirectoryData(JTable Table) {
@@ -25,15 +30,15 @@ public class DirectoryServices {
 
         String appDir = ConfigService.loadConfig().getProperty("app.dir");
         Path root = Paths.get(appDir, "Repo");
-        
+
         try {
-        Files.createDirectories(root);
-        ConfigService.saveConfig();
+            Files.createDirectories(root);
+            ConfigService.saveConfig();
 
         } catch (IOException e) {
             // TODO: handle exception
             e.printStackTrace();
-            
+
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -43,7 +48,8 @@ public class DirectoryServices {
                         try {
                             BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
                             Date lastModified = new Date(attrs.lastModifiedTime().toMillis());
-                            model.addRow(new Object[]{p.getFileName(), sdf.format(lastModified), p.toAbsolutePath(), new JButton("open")
+                            model.addRow(new Object[] { p.getFileName(), sdf.format(lastModified), p.toAbsolutePath(),
+                                    new JButton("open")
                             });
 
                         } catch (IOException e) {
@@ -57,18 +63,20 @@ public class DirectoryServices {
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onDelete(int row) {
-                
-                if(Table.isEditing()){
+
+                if (Table.isEditing()) {
                     Table.getCellEditor().cancelCellEditing();
                 }
-                
+
                 int modelRow = Table.convertRowIndexToModel(row);
                 DefaultTableModel model = (DefaultTableModel) Table.getModel();
 
                 Object folderName = model.getValueAt(modelRow, 0);
                 Object fullPath = model.getValueAt(modelRow, 2);
 
-                int confirm = JOptionPane.showConfirmDialog(Table, "Do you want to delete " + folderName.toString() + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(Table,
+                        "Do you want to delete " + folderName.toString() + "?", "Confirm Delete",
+                        JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     try {
@@ -96,18 +104,87 @@ public class DirectoryServices {
 
                 }
 
-//                System.out.println("Deleting: " + folderName + " at " + fullPath);
-//                model.removeRow(modelRow);
+                // System.out.println("Deleting: " + folderName + " at " + fullPath);
+                // model.removeRow(modelRow);
             }
 
             @Override
-            public void onView(int row) {
+            public void onTerminal(int row) {
                 int modelRow = Table.convertRowIndexToModel(row);
                 DefaultTableModel model = (DefaultTableModel) Table.getModel();
 
                 Object fullPath = model.getValueAt(modelRow, 2);
-                System.out.println("Viewing: " + fullPath);
+
+                try {
+                    String os = System.getProperty("os.name").toLowerCase();
+                    if (os.contains("win")) {
+                        // Windows
+                        new ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/K",
+                                "cd /d \"" + fullPath.toString() + "\"").start();
+                    } else if (os.contains("mac")) {
+                        // macOS
+                        new ProcessBuilder("open", "-a", "Terminal", fullPath.toString()).start();
+                    } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+                        // Linux/Unix
+                        new ProcessBuilder("x-terminal-emulator", "-e", "bash", "-c",
+                                "cd \"" + fullPath.toString() + "\"; exec bash").start();
+                    } else {
+                        JOptionPane.showMessageDialog(Table, "Unsupported operating system: " + os);
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(Table, "Error opening terminal: " + e.getMessage());
+
+                }
             }
+            
+            @Override
+            public void onFetch(int row) {
+                int modelRow = Table.convertRowIndexToModel(row);
+                DefaultTableModel model = (DefaultTableModel) Table.getModel();
+
+                Object fullPath = model.getValueAt(modelRow, 2);
+
+                File repoDir = new File(fullPath.toString());
+
+                try (Git git = Git.open(repoDir)) {
+                    git.fetch().call();
+                    JOptionPane.showMessageDialog(Table, "Fetch completed successfully for: " + fullPath.toString());
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(Table, "Error opening Git repository: " + e.getMessage());
+                } catch (Exception e) {
+                    Table.getCellEditor().cancelCellEditing();
+                    JOptionPane.showMessageDialog(Table, "Error fetching data: " + e.getMessage());
+                } 
+             
+            }
+            
+            @Override
+            public void onOpen(int row) {
+                int modelRow = Table.convertRowIndexToModel(row);
+                DefaultTableModel model = (DefaultTableModel) Table.getModel();
+
+                Object fullPath = model.getValueAt(modelRow, 2);
+
+               try{
+                     String os = System.getProperty("os.name").toLowerCase();
+                     if (os.contains("win")) {
+                          // Windows
+                          new ProcessBuilder("explorer.exe", fullPath.toString()).start();
+                     } else if (os.contains("mac")) {
+                          // macOS
+                          new ProcessBuilder("open", fullPath.toString()).start();
+                     } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+                          // Linux/Unix
+                          new ProcessBuilder("xdg-open", fullPath.toString()).start();
+                     } else {
+                          JOptionPane.showMessageDialog(Table, "Unsupported operating system: " + os);
+                     }
+               }catch(Exception e){
+                   JOptionPane.showMessageDialog(Table, "Error opening folder: " + e.getMessage());
+               }
+            }
+
+             
         };
         Table.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         Table.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));

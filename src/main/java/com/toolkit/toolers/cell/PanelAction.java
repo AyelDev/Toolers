@@ -21,10 +21,26 @@ public class PanelAction extends javax.swing.JPanel {
     }
 
     public void initEvent(TableActionEvent event, int row){
-        cmdView.addActionListener(new ActionListener(){
+        cmdTerminal.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                event.onView(row);
+                event.onTerminal(row);
+            
+            }
+        });
+        
+        cmdFetch.addActionListener(new ActionListener(){
+             @Override
+            public void actionPerformed(ActionEvent e) {
+                event.onFetch(row);
+            
+            }
+        });
+        
+        cmdFolder.addActionListener(new ActionListener(){
+             @Override
+            public void actionPerformed(ActionEvent e) {
+                event.onOpen(row);
             
             }
         });
@@ -47,13 +63,23 @@ public class PanelAction extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cmdView = new com.toolkit.toolers.cell.ActionButton();
+        cmdTerminal = new com.toolkit.toolers.cell.ActionButton();
+        cmdFetch = new com.toolkit.toolers.cell.ActionButton();
+        cmdFolder = new com.toolkit.toolers.cell.ActionButton();
         cmdDelete = new com.toolkit.toolers.cell.ActionButton();
 
-        cmdView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/eye.png")));
-        cmdView.setDefaultCapable(false);
-        cmdView.setFocusCycleRoot(true);
-        cmdView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        cmdTerminal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/terminal.png"))); // NOI18N
+        cmdTerminal.setDefaultCapable(false);
+        cmdTerminal.setFocusCycleRoot(true);
+        cmdTerminal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        cmdFetch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/fetch.png"))); // NOI18N
+        cmdFetch.setToolTipText("");
+        cmdFetch.addActionListener(this::cmdFetchActionPerformed);
+
+        cmdFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/folder.png"))); // NOI18N
+        cmdFolder.setToolTipText("");
+        cmdFolder.addActionListener(this::cmdFolderActionPerformed);
 
         cmdDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/bin.png"))); // NOI18N
         cmdDelete.setToolTipText("");
@@ -65,25 +91,43 @@ public class PanelAction extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(cmdView, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmdTerminal, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(cmdFetch, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmdFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(cmdView, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(cmdTerminal, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(cmdFetch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(cmdFolder, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cmdFetchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdFetchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdFetchActionPerformed
 
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cmdDeleteActionPerformed
 
+    private void cmdFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdFolderActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdFolderActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.toolkit.toolers.cell.ActionButton cmdDelete;
-    private com.toolkit.toolers.cell.ActionButton cmdView;
+    private com.toolkit.toolers.cell.ActionButton cmdFetch;
+    private com.toolkit.toolers.cell.ActionButton cmdFolder;
+    private com.toolkit.toolers.cell.ActionButton cmdTerminal;
     // End of variables declaration//GEN-END:variables
 }
