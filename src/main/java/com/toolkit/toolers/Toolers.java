@@ -88,8 +88,7 @@ public class Toolers extends javax.swing.JFrame {
 
         MainLogo.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         MainLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        MainLogo.setIcon(new javax.swing.ImageIcon(
-                "D:\\Users\\Ariel\\Documents\\NetBeansProjects\\Toolers\\src\\main\\java\\com\\toolkit\\toolers\\images\\folder.png")); // NOI18N
+        MainLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/folder.png"))); // NOI18N
         MainLogo.setText("TOOLERS V1.0");
         MainLogo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         MainLogo.setFocusCycleRoot(true);
@@ -169,7 +168,7 @@ public class Toolers extends javax.swing.JFrame {
             try {
                 Properties props = ConfigService.loadConfig(targetDir.toString());
                 props.setProperty("app.dir", targetDir.toString());
-                props.setProperty("app.repoDir", targetDir.toString() + "Repo");
+                props.setProperty("app.repoDir", targetDir.toPath().resolve("Repo").toString());
                 ConfigService.saveConfig();
 
             } catch (Exception e) {

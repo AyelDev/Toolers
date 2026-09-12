@@ -20,6 +20,20 @@
     </properties>
 
     <build>
+    <resources>
+        <resource>
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.png</include>
+                <include>**/*.jpg</include>
+                <include>**/*.gif</include>
+            </includes>
+        </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+        </resource>
+    </resources>
+
     <plugins>
         <plugin>
     <groupId>org.apache.maven.plugins</groupId>

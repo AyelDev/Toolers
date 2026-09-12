@@ -50,12 +50,12 @@ public class PanelAction extends javax.swing.JPanel {
         cmdView = new com.toolkit.toolers.cell.ActionButton();
         cmdDelete = new com.toolkit.toolers.cell.ActionButton();
 
-        cmdView.setIcon(new javax.swing.ImageIcon("D:\\Users\\Ariel\\Documents\\NetBeansProjects\\Toolers\\src\\main\\java\\com\\toolkit\\toolers\\images\\eye.png")); // NOI18N
+        cmdView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/eye.png")));
         cmdView.setDefaultCapable(false);
         cmdView.setFocusCycleRoot(true);
         cmdView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        cmdDelete.setIcon(new javax.swing.ImageIcon("D:\\Users\\Ariel\\Documents\\NetBeansProjects\\Toolers\\src\\main\\java\\com\\toolkit\\toolers\\images\\bin.png")); // NOI18N
+        cmdDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/toolkit/toolers/images/bin.png"))); // NOI18N
         cmdDelete.setToolTipText("");
         cmdDelete.addActionListener(this::cmdDeleteActionPerformed);
 

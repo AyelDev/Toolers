@@ -5,9 +5,12 @@
 package com.toolkit.toolers.Dialog;
 
 import com.toolkit.toolers.BaseFrame;
+import com.toolkit.toolers.Services.ConfigService;
 import com.toolkit.toolers.Services.DirectoryServices;
 import com.toolkit.toolers.Services.GitServices;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -145,11 +148,18 @@ public class CreateRepoPanel extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String Repo = RepoNameTxtField.getText();
+        
+        String appDir = ConfigService.loadConfig().getProperty("app.dir");
+        Path root = Paths.get(appDir, "Repo");
+
+        String RepoName = RepoNameTxtField.getText();
+
+        String fullRepoPath = root.resolve(RepoName).toString();
+        
         String gitUrl = CommandTxtField.getText();
         String Token = TokenTxtField.getText();
 
-        GitServices git = new GitServices(Repo);
+        GitServices git = new GitServices(fullRepoPath);
 
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
@@ -218,7 +228,7 @@ public class CreateRepoPanel extends javax.swing.JPanel {
 
                 try (Git result = Git.cloneRepository()
                         .setURI(gitUrl)
-                        .setDirectory(new File(Repo))
+                        .setDirectory(new File(fullRepoPath))
                         .setProgressMonitor(monitor)
                         .setCredentialsProvider(new UsernamePasswordCredentialsProvider(Token, ""))
                         .call()) {
