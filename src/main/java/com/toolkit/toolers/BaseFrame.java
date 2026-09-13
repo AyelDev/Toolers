@@ -9,9 +9,9 @@ import com.toolkit.toolers.Dialog.CreateTaskPanel;
 import com.toolkit.toolers.Services.ConfigService;
 import com.toolkit.toolers.Services.DirectoryServices;
 import java.awt.Color;
+import java.awt.Component;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.UIManager;
@@ -42,17 +42,61 @@ public class BaseFrame extends java.awt.Frame {
         new DirectoryServices().GetDirectoryData(jTable1);
         PromptSupport.setPrompt("Search...", jTextField1);
 
-        KeyStroke ctrlV = KeyStroke.getKeyStroke(KeyEvent.VK_C, 0);
+        jTable1.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(242, 242, 242));
+                }
+                return c;
+            }
+        });
+
+        taskListTable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(242, 242, 242));
+                }
+                return c;
+            }
+        });
+
+        searchTaskTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchTaskTxtKeyReleased(evt);
+            }
+        });
+
+        FilterTaskCmbox.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                String filterMode = (String) FilterTaskCmbox.getSelectedItem();
+                new DirectoryServices().GetTaskDirectoryData(taskListTable, filterMode);
+            }
+        });
+
+        KeyStroke ctrlN = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK);
         jPanel3.getActionMap().put("createTask", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CreateTaskPanel taskPanel = new CreateTaskPanel();
                 taskPanel.setLocationRelativeTo(BaseFrame.this);
+
+                taskPanel.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+                        new DirectoryServices().GetTaskDirectoryData(taskListTable, (String) FilterTaskCmbox.getSelectedItem());
+                    }
+                });
+
                 taskPanel.setVisible(true);
             }
         });
         jPanel3.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                .put(ctrlV, "createTask");
+                .put(ctrlN, "createTask");
     }
 
     public JTable getJTable1() {
@@ -83,7 +127,10 @@ public class BaseFrame extends java.awt.Frame {
         jTable1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jFileChooser2 = new javax.swing.JFileChooser();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        taskListTable = new javax.swing.JTable();
+        searchTaskTxt = new javax.swing.JTextField();
+        FilterTaskCmbox = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -223,30 +270,52 @@ public class BaseFrame extends java.awt.Frame {
 
         jTabbedPane1.addTab("tab1", RepositoryPanel);
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel2.setText("Create Task [c]");
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setText("Create Task [ctrl + n]");
+
+        taskListTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Task Name", "Client Name", "Directory", "Actions"
+            }
+        ));
+        jScrollPane1.setViewportView(taskListTable);
+
+        searchTaskTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        searchTaskTxt.setText(" ");
+
+        FilterTaskCmbox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        FilterTaskCmbox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Today", "Recent" }));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jFileChooser2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 817, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(17, 17, 17))
+                        .addComponent(searchTaskTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(FilterTaskCmbox, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
-                .addComponent(jLabel2)
-                .addGap(30, 30, 30)
-                .addComponent(jFileChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 451, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2)
+                    .addComponent(searchTaskTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(FilterTaskCmbox))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 463, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab2", jPanel3);
@@ -321,12 +390,10 @@ public class BaseFrame extends java.awt.Frame {
     }// GEN-LAST:event_RepositoryActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
         jTabbedPane1.setSelectedIndex(1);
-         String taskDir = ConfigService.loadConfig().getProperty("app.taskDir", "");
-        if(!taskDir.isEmpty()){
-            jFileChooser2.setCurrentDirectory(new File(taskDir));
-        }
+        new DirectoryServices().GetTaskDirectoryData(taskListTable, (String) FilterTaskCmbox.getSelectedItem());
+        String taskDir = ConfigService.loadConfig().getProperty("app.taskDir", "");
+       
         setButton(jButton1);
         resetButtons(jButton4, Repository, jButton2);
     }// GEN-LAST:event_jButton1ActionPerformed
@@ -396,6 +463,14 @@ public class BaseFrame extends java.awt.Frame {
         obj.setRowFilter(RowFilter.regexFilter("(?i)" + jTextField1.getText()));
     }// GEN-LAST:event_jTextField1KeyReleased
 
+    private void searchTaskTxtKeyReleased(java.awt.event.KeyEvent evt) {
+        DefaultTableModel tableModel = (DefaultTableModel) taskListTable.getModel();
+        TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(tableModel);
+        taskListTable.setRowSorter(obj);
+
+        obj.setRowFilter(RowFilter.regexFilter("(?i)" + searchTaskTxt.getText()));
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -408,6 +483,7 @@ public class BaseFrame extends java.awt.Frame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> FilterTaskCmbox;
     private javax.swing.JButton Repository;
     private javax.swing.JPanel RepositoryPanel;
     private javax.swing.JButton jButton1;
@@ -415,7 +491,6 @@ public class BaseFrame extends java.awt.Frame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JFileChooser jFileChooser1;
-    private javax.swing.JFileChooser jFileChooser2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -423,9 +498,12 @@ public class BaseFrame extends java.awt.Frame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField searchTaskTxt;
+    private javax.swing.JTable taskListTable;
     // End of variables declaration//GEN-END:variables
 }

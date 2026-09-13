@@ -131,4 +131,32 @@ public class ConfigService {
         properties.setProperty("app.tasks", String.join(",", tasks));
         saveConfig();
     }
+
+    public static List<String> getClients(){
+        loadConfig();
+        String clients = properties.getProperty("app.clients", "");
+        if(clients.isEmpty()) return new ArrayList<>();
+        return new ArrayList<>(Arrays.asList(clients.split(",")));
+    }
+
+    public static void addClient(String client){
+        loadConfig();
+        String existing = properties.getProperty("app.clients", "");
+        if(existing.isEmpty()){
+            properties.setProperty("app.clients", client);
+        }else{
+            properties.setProperty("app.clients", existing + "," + client);
+        }
+        saveConfig();
+    }
+
+    public static void removeClient(String client){
+        loadConfig();
+        String existing = properties.getProperty("app.clients", "");
+        if(existing.isEmpty()) return;
+        List<String> clients = new ArrayList<>(Arrays.asList(existing.split(",")));
+        clients.remove(client);
+        properties.setProperty("app.clients", String.join(",", clients));
+        saveConfig();
+    }
 }

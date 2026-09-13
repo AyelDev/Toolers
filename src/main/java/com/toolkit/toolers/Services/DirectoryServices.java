@@ -1,6 +1,7 @@
 package com.toolkit.toolers.Services;
 
 import com.toolkit.toolers.BaseFrame;
+import com.toolkit.toolers.Dialog.ImageTaskPanel;
 import com.toolkit.toolers.cell.TableActionCellEditor;
 import com.toolkit.toolers.cell.TableActionCellRender;
 import com.toolkit.toolers.cell.TableActionEvent;
@@ -15,6 +16,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -249,6 +251,117 @@ public class DirectoryServices {
         Table.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         Table.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
         Table.setRowHeight(50);
+    }
+
+    public void GetTaskDirectoryData(JTable Table, String filterMode) {
+        DefaultTableModel model = (DefaultTableModel) Table.getModel();
+        model.setRowCount(0);
+
+        String appDir = ConfigService.loadConfig().getProperty("app.dir");
+        Path taskRoot = Paths.get(appDir, "Task");
+
+        if (!Files.exists(taskRoot)) {
+            try {
+                Files.createDirectories(taskRoot);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        String todayPrefix = getTodayPrefix();
+
+        try (var taskStream = Files.list(taskRoot)) {
+            taskStream.filter(Files::isDirectory).forEach(taskDir -> {
+                String taskName = taskDir.getFileName().toString();
+
+                try (var clientStream = Files.list(taskDir)) {
+                    clientStream.filter(Files::isDirectory).forEach(clientDir -> {
+                        String clientName = clientDir.getFileName().toString();
+                        String fullPath = clientDir.toAbsolutePath().toString();
+
+                        if ("Today".equals(filterMode)) {
+                            boolean hasToday = false;
+                            try (var dateStream = Files.list(clientDir)) {
+                                hasToday = dateStream
+                                    .filter(Files::isDirectory)
+                                    .anyMatch(dateDir -> dateDir.getFileName().toString().startsWith(todayPrefix));
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                            if (!hasToday) return;
+                        }
+
+                        try {
+                            BasicFileAttributes attrs = Files.readAttributes(clientDir, BasicFileAttributes.class);
+                            Date lastModified = new Date(attrs.lastModifiedTime().toMillis());
+                            model.addRow(new Object[] {
+                                taskName,
+                                clientName,
+                                fullPath,
+                                new JButton("open")
+                            });
+                        } catch (IOException e) {
+                            System.out.println("Could not read attributes for: " + clientDir);
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException ex) {
+            System.getLogger(DirectoryServices.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+
+        com.toolkit.toolers.cell.TableTaskActionEvent event = new com.toolkit.toolers.cell.TableTaskActionEvent() {
+            @Override
+            public void onCreateTask(int row) {
+                // TODO: implement later
+                System.out.println("Create Task clicked for row: " + row);
+                new ImageTaskPanel().setVisible(true);
+
+            }
+
+            @Override
+            public void onAddImage(int row) {
+                // TODO: implement later
+                System.out.println("Add Image clicked for row: " + row);
+            }
+
+            @Override
+            public void onOpenDirectory(int row) {
+                int modelRow = Table.convertRowIndexToModel(row);
+                DefaultTableModel model = (DefaultTableModel) Table.getModel();
+                Object fullPath = model.getValueAt(modelRow, 2);
+
+                try {
+                    String os = System.getProperty("os.name").toLowerCase();
+                    if (os.contains("win")) {
+                        new ProcessBuilder("explorer.exe", fullPath.toString()).start();
+                    } else if (os.contains("mac")) {
+                        new ProcessBuilder("open", fullPath.toString()).start();
+                    } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+                        new ProcessBuilder("xdg-open", fullPath.toString()).start();
+                    } else {
+                        JOptionPane.showMessageDialog(Table, "Unsupported operating system: " + os);
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(Table, "Error opening folder: " + e.getMessage());
+                }
+            }
+        };
+        Table.getColumnModel().getColumn(3).setCellRenderer(new com.toolkit.toolers.cell.TableTaskActionCellRender());
+        Table.getColumnModel().getColumn(3).setCellEditor(new com.toolkit.toolers.cell.TableTaskActionCellEditor(event));
+        Table.setRowHeight(50);
+    }
+
+    private String getTodayPrefix() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM");
+        String monthStr = monthFormat.format(calendar.getTime());
+        int day = calendar.get(Calendar.DATE);
+        int year = calendar.get(Calendar.YEAR);
+        return monthStr + "-" + day + "-" + year + "-";
     }
 
 }
