@@ -18,6 +18,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -141,7 +142,7 @@ public class DirectoryServices {
 
                 }
             }
-            
+
             @Override
             public void onFetch(int row) {
                 int modelRow = Table.convertRowIndexToModel(row);
@@ -168,7 +169,8 @@ public class DirectoryServices {
                             git.fetch()
                                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
                                     .call();
-                            JOptionPane.showMessageDialog(Table, "Fetch completed successfully for: " + fullPath.toString());
+                            JOptionPane.showMessageDialog(Table,
+                                    "Fetch completed successfully for: " + fullPath.toString());
                             return;
                         } catch (TransportException e) {
                             // Token failed, fall through to prompt
@@ -207,7 +209,8 @@ public class DirectoryServices {
             }
 
             private String extractTokenFromUrl(String url) {
-                if (url == null) return null;
+                if (url == null)
+                    return null;
                 try {
                     URI uri = new URI(url);
                     String userInfo = uri.getUserInfo();
@@ -219,7 +222,7 @@ public class DirectoryServices {
                 }
                 return null;
             }
-            
+
             @Override
             public void onOpen(int row) {
                 int modelRow = Table.convertRowIndexToModel(row);
@@ -227,26 +230,25 @@ public class DirectoryServices {
 
                 Object fullPath = model.getValueAt(modelRow, 2);
 
-               try{
-                     String os = System.getProperty("os.name").toLowerCase();
-                     if (os.contains("win")) {
-                          // Windows
-                          new ProcessBuilder("explorer.exe", fullPath.toString()).start();
-                     } else if (os.contains("mac")) {
-                          // macOS
-                          new ProcessBuilder("open", fullPath.toString()).start();
-                     } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
-                          // Linux/Unix
-                          new ProcessBuilder("xdg-open", fullPath.toString()).start();
-                     } else {
-                          JOptionPane.showMessageDialog(Table, "Unsupported operating system: " + os);
-                     }
-               }catch(Exception e){
-                   JOptionPane.showMessageDialog(Table, "Error opening folder: " + e.getMessage());
-               }
+                try {
+                    String os = System.getProperty("os.name").toLowerCase();
+                    if (os.contains("win")) {
+                        // Windows
+                        new ProcessBuilder("explorer.exe", fullPath.toString()).start();
+                    } else if (os.contains("mac")) {
+                        // macOS
+                        new ProcessBuilder("open", fullPath.toString()).start();
+                    } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+                        // Linux/Unix
+                        new ProcessBuilder("xdg-open", fullPath.toString()).start();
+                    } else {
+                        JOptionPane.showMessageDialog(Table, "Unsupported operating system: " + os);
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(Table, "Error opening folder: " + e.getMessage());
+                }
             }
 
-             
         };
         Table.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         Table.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
@@ -284,22 +286,23 @@ public class DirectoryServices {
                             boolean hasToday = false;
                             try (var dateStream = Files.list(clientDir)) {
                                 hasToday = dateStream
-                                    .filter(Files::isDirectory)
-                                    .anyMatch(dateDir -> dateDir.getFileName().toString().startsWith(todayPrefix));
+                                        .filter(Files::isDirectory)
+                                        .anyMatch(dateDir -> dateDir.getFileName().toString().startsWith(todayPrefix));
                             } catch (IOException e) {
                                 // ignore
                             }
-                            if (!hasToday) return;
+                            if (!hasToday)
+                                return;
                         }
 
                         try {
                             BasicFileAttributes attrs = Files.readAttributes(clientDir, BasicFileAttributes.class);
                             Date lastModified = new Date(attrs.lastModifiedTime().toMillis());
                             model.addRow(new Object[] {
-                                taskName,
-                                clientName,
-                                fullPath,
-                                new JButton("open")
+                                    taskName,
+                                    clientName,
+                                    fullPath,
+                                    new JButton("open")
                             });
                         } catch (IOException e) {
                             System.out.println("Could not read attributes for: " + clientDir);
@@ -318,7 +321,16 @@ public class DirectoryServices {
             public void onCreateTask(int row) {
                 // TODO: implement later
                 System.out.println("Create Task clicked for row: " + row);
-                new ImageTaskPanel().setVisible(true);
+
+                ImageTaskPanel panel = new ImageTaskPanel();
+                javax.swing.JDialog dialog = new javax.swing.JDialog();
+                dialog.setTitle("Image Task");
+                dialog.setModal(false);
+                dialog.setContentPane(panel);
+                dialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+                dialog.pack();
+                dialog.setLocationRelativeTo(Table);
+                dialog.setVisible(true);
 
             }
 
@@ -351,7 +363,8 @@ public class DirectoryServices {
             }
         };
         Table.getColumnModel().getColumn(3).setCellRenderer(new com.toolkit.toolers.cell.TableTaskActionCellRender());
-        Table.getColumnModel().getColumn(3).setCellEditor(new com.toolkit.toolers.cell.TableTaskActionCellEditor(event));
+        Table.getColumnModel().getColumn(3)
+                .setCellEditor(new com.toolkit.toolers.cell.TableTaskActionCellEditor(event));
         Table.setRowHeight(50);
     }
 
