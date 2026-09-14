@@ -408,12 +408,13 @@ public class BaseFrame extends java.awt.Frame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         CreateRepoPanel repoPnl = new CreateRepoPanel(this);
-        JDialog dialog = new JDialog(new BaseFrame(), "Create Repo", true);
+        JDialog dialog = new JDialog(this, "Create Repo", true);
 
         dialog.setContentPane(repoPnl);
         dialog.setAutoRequestFocus(true);
         dialog.setResizable(false);
-        dialog.setLocationRelativeTo(RepositoryPanel);
+        dialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        dialog.setLocationRelativeTo(this);
         dialog.pack();
         dialog.setVisible(true);
     }// GEN-LAST:event_jButton3ActionPerformed

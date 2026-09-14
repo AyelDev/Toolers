@@ -8,7 +8,11 @@ import com.toolkit.toolers.BaseFrame;
 import com.toolkit.toolers.Services.ConfigService;
 import com.toolkit.toolers.Services.DirectoryServices;
 import com.toolkit.toolers.Services.GitServices;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Future;
@@ -43,6 +47,58 @@ public class CreateRepoPanel extends javax.swing.JPanel {
         PromptSupport.setPrompt("Repo Name...", RepoNameTxtField);
          PromptSupport.setPrompt("Command...", CommandTxtField);
           PromptSupport.setPrompt("Token...", TokenTxtField);
+    }
+
+    private void addHostToKnownHosts(String gitUrl) throws Exception {
+        String host = null;
+        if (gitUrl.startsWith("git@")) {
+            String afterAt = gitUrl.substring(4);
+            int colonIndex = afterAt.indexOf(':');
+            if (colonIndex > 0) {
+                host = afterAt.substring(0, colonIndex);
+            }
+        }
+        if (host == null) {
+            return;
+        }
+
+        Path knownHosts = Paths.get(System.getProperty("user.home"), ".ssh", "known_hosts");
+
+        if (Files.exists(knownHosts)) {
+            try (BufferedReader reader = Files.newBufferedReader(knownHosts)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains(host)) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        ProcessBuilder pb = new ProcessBuilder("ssh-keyscan", host);
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.startsWith("#") && !line.isEmpty()) {
+                    output.append(line).append("\n");
+                }
+            }
+        }
+        process.waitFor();
+
+        if (output.length() > 0) {
+            Path sshDir = Paths.get(System.getProperty("user.home"), ".ssh");
+            if (!Files.exists(sshDir)) {
+                Files.createDirectories(sshDir);
+            }
+            try (FileWriter writer = new FileWriter(knownHosts.toFile(), true)) {
+                writer.write(output.toString());
+            }
+        }
     }
 
     /**
@@ -225,6 +281,8 @@ public class CreateRepoPanel extends javax.swing.JPanel {
                     public void showDuration(boolean bln) {
                     }
                 };
+
+                addHostToKnownHosts(gitUrl);
 
                 try (Git result = Git.cloneRepository()
                         .setURI(gitUrl)
