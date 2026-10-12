@@ -101,6 +101,22 @@ public class CreateRepoPanel extends javax.swing.JPanel {
         }
     }
 
+    private String getRootCauseMessage(Throwable error) {
+        Throwable cause = error;
+        String message = error.getMessage();
+
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+            if (cause.getMessage() != null && !cause.getMessage().isBlank()) {
+                message = cause.getMessage();
+            }
+        }
+
+        return message == null || message.isBlank()
+                ? "Unknown error while cloning the repository."
+                : message;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -309,13 +325,13 @@ public class CreateRepoPanel extends javax.swing.JPanel {
                     GitProgressBar.setString("Clone Completed");
                     new DirectoryServices().GetDirectoryData(baseFrame.getJTable1());
                 } catch (Exception ex) {
-//                    ex.printStackTrace();
-                    if (ex.getMessage().contains("git failed")) {
-                        JOptionPane.showMessageDialog(jLabel1, "Error Cloning Git", "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(jLabel1, "Error" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        ex.printStackTrace();
-                    }
+                    String errorMessage = getRootCauseMessage(ex);
+                    JOptionPane.showMessageDialog(
+                            CreateRepoPanel.this,
+                            "Error cloning Git:\n" + errorMessage,
+                            "Clone Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
                 }
             }
 
