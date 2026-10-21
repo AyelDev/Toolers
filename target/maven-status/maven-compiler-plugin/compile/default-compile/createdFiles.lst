@@ -5,6 +5,7 @@ com\toolkit\toolers\pojo\RepoProgress.class
 com\toolkit\toolers\Services\DirectoryServices.class
 com\toolkit\toolers\BaseFrame$10.class
 com\toolkit\toolers\Dialog\CreateRepoPanel.class
+com\toolkit\toolers\Services\DirectoryServices$3.class
 com\toolkit\toolers\cell\TableActionEvent.class
 com\toolkit\toolers\cell\PanelAction$2.class
 com\toolkit\toolers\BaseFrame$4.class
