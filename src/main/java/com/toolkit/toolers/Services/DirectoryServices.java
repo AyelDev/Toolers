@@ -28,7 +28,14 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.api.errors.TransportException;
 import java.net.URI;
 
+import javax.swing.SwingWorker;
+import java.util.concurrent.ExecutionException;
+import java.util.Set;
+import java.util.HashSet;
+
 public class DirectoryServices {
+
+    private static final Set<String> activeFetches = java.util.Collections.synchronizedSet(new HashSet<>());
 
     public void GetDirectoryData(JTable Table) {
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
@@ -55,7 +62,7 @@ public class DirectoryServices {
                             BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
                             Date lastModified = new Date(attrs.lastModifiedTime().toMillis());
                             model.addRow(new Object[] { p.getFileName(), sdf.format(lastModified), p.toAbsolutePath(),
-                                    new JButton("open")
+                                    "Ready", new JButton("open")
                             });
 
                         } catch (IOException e) {
@@ -145,67 +152,24 @@ public class DirectoryServices {
 
             @Override
             public void onFetch(int row) {
+
                 int modelRow = Table.convertRowIndexToModel(row);
                 DefaultTableModel model = (DefaultTableModel) Table.getModel();
 
-                Object fullPath = model.getValueAt(modelRow, 2);
-                File repoDir = new File(fullPath.toString());
-                String tokenKey = "token." + fullPath;
+                String fullPath = model.getValueAt(modelRow, 2).toString();
 
-                try (Git git = Git.open(repoDir)) {
-                    // 1. Try extract token from remote URL
-                    String remoteUrl = git.getRepository().getConfig()
-                            .getString("remote", "origin", "url");
-                    String token = extractTokenFromUrl(remoteUrl);
-
-                    // 2. If not in URL, check config
-                    if (token == null || token.isEmpty()) {
-                        token = ConfigService.getProperty(tokenKey);
-                    }
-
-                    // 3. Try fetch with available token
-                    if (token != null && !token.isEmpty()) {
-                        try {
-                            git.fetch()
-                                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
-                                    .call();
-                            JOptionPane.showMessageDialog(Table,
-                                    "Fetch completed successfully for: " + fullPath.toString());
-                            return;
-                        } catch (TransportException e) {
-                            // Token failed, fall through to prompt
-                        }
-                    }
-
-                    // 4. Prompt user for token
-                    String inputToken = JOptionPane.showInputDialog(Table,
-                            "Authentication required. Please enter your token:",
-                            "Fetch - Authentication", JOptionPane.PLAIN_MESSAGE);
-
-                    if (inputToken == null || inputToken.trim().isEmpty()) {
-                        if (Table.isEditing()) {
-                            Table.getCellEditor().cancelCellEditing();
-                        }
-                        return;
-                    }
-
-                    // 5. Save token to config and retry
-                    ConfigService.setProperty(tokenKey, inputToken.trim());
-
-                    git.fetch()
-                            .setCredentialsProvider(new UsernamePasswordCredentialsProvider(inputToken.trim(), ""))
-                            .call();
-                    JOptionPane.showMessageDialog(Table, "Fetch completed successfully for: " + fullPath.toString());
-
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(Table, "Error opening Git repository: " + e.getMessage());
-                } catch (TransportException e) {
-                    Table.getCellEditor().cancelCellEditing();
-                    JOptionPane.showMessageDialog(Table, "Authentication failed: " + e.getMessage());
-                } catch (Exception e) {
-                    Table.getCellEditor().cancelCellEditing();
-                    JOptionPane.showMessageDialog(Table, "Error fetching data: " + e.getMessage());
+                if (!activeFetches.add(fullPath)) {
+                    JOptionPane.showMessageDialog(
+                            Table,
+                            "Fetch is already running for this repository.");
+                    return;
                 }
+
+                if (Table.isEditing()) {
+                    Table.getCellEditor().stopCellEditing();
+                }
+
+                fetchInBackground(Table, fullPath, null);
             }
 
             private String extractTokenFromUrl(String url) {
@@ -250,8 +214,8 @@ public class DirectoryServices {
             }
 
         };
-        Table.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-        Table.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+        Table.getColumnModel().getColumn(4).setCellRenderer(new TableActionCellRender());
+        Table.getColumnModel().getColumn(4).setCellEditor(new TableActionCellEditor(event));
         Table.setRowHeight(50);
     }
 
@@ -375,6 +339,286 @@ public class DirectoryServices {
         int day = calendar.get(Calendar.DATE);
         int year = calendar.get(Calendar.YEAR);
         return monthStr + "-" + day + "-" + year + "-";
+    }
+
+    private boolean isSSHUrl(String url) {
+        return url != null &&
+                (url.startsWith("git@")
+                        || url.startsWith("ssh://"));
+    }
+
+    private void fetchInBackground(
+            JTable table,
+            String fullPath,
+            String replacementUrl) {
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+
+                try (Git git = Git.open(new File(fullPath))) {
+
+                    String remoteUrl = git.getRepository()
+                            .getConfig()
+                            .getString("remote", "origin", "url");
+
+                    if (remoteUrl == null) {
+                        throw new IOException("No origin remote configured.");
+                    }
+
+                    var fetch = git.fetch().setTimeout(5);
+
+                    if (replacementUrl != null) {
+
+                        // Fetch using new SSH URL.
+                        // Do not save the new URL yet.
+                        fetch.setRemote(replacementUrl);
+
+                        // Preserve the existing origin fetch mappings.
+                        String[] specs = git.getRepository()
+                                .getConfig()
+                                .getStringList("remote", "origin", "fetch");
+
+                        if (specs.length > 0) {
+                            java.util.List<org.eclipse.jgit.transport.RefSpec> refSpecs = new java.util.ArrayList<>();
+
+                            for (String spec : specs) {
+                                refSpecs.add(
+                                        new org.eclipse.jgit.transport.RefSpec(spec));
+                            }
+
+                            fetch.setRefSpecs(refSpecs);
+                        }
+
+                    } else if (isHTTPSUrl(remoteUrl)) {
+
+                        String token = ConfigService.getProperty(
+                                "token." + fullPath);
+
+                        if (token != null && !token.isBlank()) {
+                            fetch.setCredentialsProvider(
+                                    new UsernamePasswordCredentialsProvider(
+                                            "x-access-token",
+                                            token));
+                        }
+                    }
+
+                    fetch.call();
+
+                    // Save new SSH URL only after successful fetch.
+                    if (replacementUrl != null) {
+                        var config = git.getRepository().getConfig();
+
+                        config.setString(
+                                "remote",
+                                "origin",
+                                "url",
+                                replacementUrl);
+
+                        config.save();
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void done() {
+
+                try {
+                    get();
+
+                    activeFetches.remove(fullPath);
+
+                    JOptionPane.showMessageDialog(
+                            table,
+                            "Fetch completed successfully!",
+                            "Git Fetch",
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                } catch (Exception ex) {
+
+                    Throwable cause = ex;
+
+                    if (ex instanceof ExecutionException
+                            && ex.getCause() != null) {
+                        cause = ex.getCause();
+                    }
+
+                    if (replacementUrl == null
+                            && cause instanceof TransportException) {
+
+                        try (Git git = Git.open(new File(fullPath))) {
+
+                            String remoteUrl = git.getRepository()
+                                    .getConfig()
+                                    .getString("remote", "origin", "url");
+
+                            if (isSSHUrl(remoteUrl)) {
+
+                                promptNewSSH(table, fullPath, cause);
+
+                            } else if (isHTTPSUrl(remoteUrl)) {
+
+                                promptHTTPSCredentials(table, fullPath, cause);
+
+                            } else {
+
+                                activeFetches.remove(fullPath);
+
+                                JOptionPane.showMessageDialog(
+                                        table,
+                                        "Unsupported Git remote URL.",
+                                        "Fetch Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            }
+
+                        } catch (Exception e) {
+                            activeFetches.remove(fullPath);
+
+                            JOptionPane.showMessageDialog(
+                                    table,
+                                    e.getMessage(),
+                                    "Git Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+
+                    } else {
+
+                        activeFetches.remove(fullPath);
+
+                        JOptionPane.showMessageDialog(
+                                table,
+                                "Fetch failed:\n" + cause.getMessage(),
+                                "Git Fetch Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        };
+
+        worker.execute();
+    }
+
+    private void promptNewSSH(
+            JTable table,
+            String fullPath,
+            Throwable error) {
+        try (Git git = Git.open(new File(fullPath))) {
+
+            String oldUrl = git.getRepository()
+                    .getConfig()
+                    .getString("remote", "origin", "url");
+
+            if (!isSSHUrl(oldUrl)) {
+                activeFetches.remove(fullPath);
+
+                JOptionPane.showMessageDialog(
+                        table,
+                        "Fetch failed:\n" + error.getMessage(),
+                        "Fetch Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int choice = JOptionPane.showConfirmDialog(
+                    table,
+                    "Unable to connect to SSH:\n"
+                            + oldUrl
+                            + "\n\nError: " + error.getMessage()
+                            + "\n\nDo you want to update the SSH URL?",
+                    "Update SSH",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+            if (choice != JOptionPane.YES_OPTION) {
+                activeFetches.remove(fullPath);
+                return;
+            }
+
+            String newUrl = JOptionPane.showInputDialog(
+                    table,
+                    "Enter new SSH URL:",
+                    oldUrl);
+
+            if (newUrl == null) {
+                activeFetches.remove(fullPath);
+                return;
+            }
+
+            newUrl = newUrl.trim();
+
+            if (!isSSHUrl(newUrl) || newUrl.equals(oldUrl)) {
+                activeFetches.remove(fullPath);
+
+                JOptionPane.showMessageDialog(
+                        table,
+                        "Please enter a valid and different SSH URL.",
+                        "Invalid SSH URL",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Retry in another SwingWorker
+            fetchInBackground(table, fullPath, newUrl);
+
+        } catch (Exception ex) {
+            activeFetches.remove(fullPath);
+
+            JOptionPane.showMessageDialog(
+                    table,
+                    "Error: " + ex.getMessage(),
+                    "Git Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private boolean isHTTPSUrl(String url) {
+        return url != null &&
+                (url.startsWith("https://")
+                        || url.startsWith("http://"));
+    }
+
+    private void promptHTTPSCredentials(
+            JTable table,
+            String fullPath,
+            Throwable error) {
+
+        javax.swing.JPasswordField tokenField = new javax.swing.JPasswordField(25);
+
+        int result = JOptionPane.showConfirmDialog(
+                table,
+                tokenField,
+                "Enter GitHub Personal Access Token",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (result != JOptionPane.OK_OPTION) {
+            activeFetches.remove(fullPath);
+            return;
+        }
+
+        char[] password = tokenField.getPassword();
+
+        try {
+            String token = new String(password);
+
+            if (token.isBlank()) {
+                activeFetches.remove(fullPath);
+                return;
+            }
+
+            // Save token for subsequent fetches.
+            ConfigService.setProperty(
+                    "token." + fullPath,
+                    token);
+
+            fetchInBackground(table, fullPath, null);
+
+        } finally {
+            java.util.Arrays.fill(password, '\0');
+        }
     }
 
 }
